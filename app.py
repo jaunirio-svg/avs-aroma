@@ -1,61 +1,54 @@
 import streamlit as st
 from agentes import AgenteAVS
 
-# Configuração da Página
-st.set_page_config(page_title="AVS – Sistema Autônomo de Luxo", page_icon="🧪", layout="wide")
+st.set_page_config(page_title="AVS – Autonomia de Luxo", page_icon="💎", layout="wide")
 
-# Título Principal
-st.title("🧪 AVS – Sistema Autônomo de Luxo")
-st.subheader("Inteligência Multi-Produto do Almir")
+# Estilização para um visual mais limpo
+st.markdown("""
+    <style>
+    .main { background-color: #0e1117; }
+    .stButton>button { width: 100%; background-color: #d4af37; color: white; border-radius: 5px; }
+    </style>
+    """, unsafe_allow_html=True)
 
-# Verificação da Chave API
+st.title("💎 AVS – Inteligência Autônoma de Luxo")
+st.subheader("Plataforma Multi-Produto do Almir")
+
 if "GROQ_API_KEY" not in st.secrets:
-    st.error("Erro: Configure a GROQ_API_KEY nos Secrets do Streamlit!")
+    st.error("Erro: Configure a API Key nos Secrets!")
     st.stop()
 
 api_key = st.secrets["GROQ_API_KEY"]
+item = st.text_input("Qual item de luxo vamos analisar?", placeholder="Ex: Asad, Rolex, Porsche, iPhone 15 Pro...")
 
-# Campo de entrada (Input)
-item = st.text_input("Qual produto vamos transformar em desejo hoje?", placeholder="Ex: Asad, Club de Nuit, Rolex...")
-
-# Botão de Ação (Gerar)
-botao_gerar = st.button("🚀 GERAR ESTRATÉGIA COMPLETA")
-
-st.divider()
-
-if botao_gerar:
+if st.button("🚀 GERAR ESTRATÉGIA"):
     if not item:
-        st.warning("Por favor, digite o nome de um produto!")
+        st.warning("Digite o nome de um produto.")
     else:
         avs = AgenteAVS(api_key)
+        with st.status(f"Mapeando DNA de '{item}'...", expanded=True) as status:
+            res = avs.executar_fluxo(item)
+            status.update(label="Análise Concluída!", state="complete")
         
-        with st.status(f"Analisando '{item}'...", expanded=True) as status:
-            try:
-                res = avs.executar_fluxo(item)
-                status.update(label=f"Campanha para {item} Concluída!", state="complete")
-                
-                # Exibição dos Resultados
-                st.subheader("📋 ÁREA DE TRANSFERÊNCIA (Copiar Tudo)")
-                texto_final = f"PRODUTO ANALISADO: {item}\n\n" + "\n\n".join(res)
-                st.code(texto_final, language="text")
+        st.divider()
+        
+        # Área de Copiar
+        st.subheader("📋 Script Completo")
+        st.code(f"PRODUTO: {item}\n\n" + "\n\n".join(res))
 
-                st.subheader(f"📑 INTELIGÊNCIA DE MERCADO: {item}")
-                
-                with st.expander("👑 1. POSICIONAMENTO E DETALHES TÉCNICOS", expanded=True):
-                    st.write(res[0])
-                
-                with st.expander("🎬 2. ESTRATÉGIA DE VIRALIZAÇÃO", expanded=True):
-                    st.write(res[1])
-                    st.divider()
-                    st.write(res[3])
-                
-                with st.expander("📸 3. PROMPTS VISUAIS (Foco no Design)", expanded=False):
-                    st.write(res[2])
-                
-                with st.expander("📱 4. MARKETING E TAGS", expanded=False):
-                    st.write(res[4])
-                    
-            except Exception as e:
-                st.error(f"Ocorreu um erro no processamento: {e}")
+        # Visualização por Abas para ficar mais organizado
+        tab1, tab2, tab3, tab4 = st.tabs(["👑 Estratégia", "📱 Viral", "📸 Visual", "✍️ Marketing"])
+        
+        with tab1:
+            st.markdown(res[0])
+        with tab2:
+            st.markdown(res[1])
+            st.divider()
+            st.markdown(res[3])
+        with tab3:
+            st.markdown(res[2])
+        with tab4:
+            st.markdown(res[4])
 
-st.sidebar.info("v3.0 - Reconhecimento Automático Ativado.")
+st.sidebar.markdown("---")
+st.sidebar.info("v4.0 - Filtro de Categoria Inteligente Ativado.")
