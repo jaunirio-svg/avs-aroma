@@ -5,15 +5,22 @@ class AgenteAVS:
         self.client = Groq(api_key=api_key)
 
     def executar_fluxo(self, item):
-        # Instrução reforçada para identificar o produto sem "alucinar" categorias erradas
-        diretriz = f"Analise o produto '{item}'. Se for um perfume árabe (como Lattafa, Maison Alhambra), identifique as notas reais. Se for outro item de luxo, mantenha o foco técnico. Proibido confundir marcas de luxo com culinária ou itens genéricos."
+        # BANCO DE DADOS INTERNO PARA NÃO DAR ERRO DE CONTEXTO
+        contexto_especifico = ""
+        
+        if "asad" in item.lower():
+            contexto_especifico = "O Asad da Lattafa é um perfume árabe masculino, famoso por ser inspirado no Sauvage Elixir. Notas Reais: Pimenta Preta, Abacaxi, Tabaco, Café, Patchouli, Sândalo e Baunilha. O frasco é preto com detalhes dourados em relevo."
+        elif "club de nuit" in item.lower():
+            contexto_especifico = "O Club de Nuit Intense Man da Armaf é um perfume árabe focado em rastro e projeção, inspirado no Creed Aventus. Notas: Limão, Groselha, Maçã, Rosa, Jasmim, Bétula, Almíscar e Âmbar Cinzento. O frasco é preto fosco com uma corrente e medalhão pendurado."
+        
+        diretriz = f"Considere este contexto técnico: {contexto_especifico}. Identifique o produto '{item}' e gere conteúdo de luxo. Proibido falar de comida ou acessórios externos como relógios. Foco no frasco e no rastro."
         
         prompts = [
-            f"Aja como CEO: Forneça detalhes técnicos REAIS de {item}. Se for perfume, use a pirâmide olfativa correta (Ex: Asad da Lattafa tem notas de pimenta preta, tabaco e baunilha).",
-            f"Aja como Estrategista: 3 ganchos TikTok para {item}. Foque no rastro e exclusividade.",
-            f"Aja como Diretor de Arte: 3 prompts 8k focados no frasco/design real de {item}. Descreva o acabamento físico (ouro, preto, relevos).",
-            f"Aja como Roteirista: 2 roteiros de 12s focados no uso de {item} em ambientes de alto padrão.",
-            f"Aja como Social Media: 10 hashtags e 3 legendas magnéticas para {item}. (Mantenha o foco em perfumaria e lifestyle de luxo)."
+            f"Aja como CEO: Defina o posicionamento premium de {item}. Use a pirâmide olfativa correta mencionada no contexto. Fale do design do frasco.",
+            f"Aja como Estrategista Viral: Crie 3 ganchos magnéticos para TikTok sobre {item}. Foque no 'Rastro de Milionário' e nos elogios.",
+            f"Aja como Fotógrafo: Gere 3 prompts de imagem 8k focados no frasco de {item}. Descreva o brilho do vidro e os detalhes metálicos.",
+            f"Aja como Roteirista: Crie 2 roteiros de 12s. Close no borrifador e na reação das pessoas ao sentirem o rastro.",
+            f"Aja como Social Media: Sugira 10 hashtags de PERFUMARIA e 3 legendas magnéticas. Proibido hashtags de comida."
         ]
         
         respostas = [] 
@@ -21,7 +28,7 @@ class AgenteAVS:
             completion = self.client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "Você é um expert em Branding de Luxo. Você conhece profundamente perfumes árabes e marcas premium. Se o usuário digitar apenas o nome de um perfume famoso, você DEVE recuperar os dados reais dele no seu banco de dados."},
+                    {"role": "system", "content": "Você é um especialista em Perfumaria Árabe e Branding de Luxo. Você nunca alucina. Você entrega dados técnicos precisos e roteiros prontos para postar."},
                     {"role": "user", "content": p}
                 ]
             )
