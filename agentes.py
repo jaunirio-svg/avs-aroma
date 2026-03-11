@@ -4,13 +4,16 @@ class AgenteAVS:
     def __init__(self, api_key):
         self.client = Groq(api_key=api_key)
 
-    def executar_fluxo(self, perfume):
+    def executar_fluxo(self, item):
+        # A IA agora identifica sozinha se é perfume, relógio ou qualquer item de luxo
+        diretriz = f"Analise o produto '{item}'. Identifique sua categoria e aplique diretrizes de luxo reais. Se for perfume, fale da pirâmide olfativa. Se for objeto, fale dos materiais e design. Proibido inventar acessórios externos."
+        
         prompts = [
-            f"Aja como CEO de uma Grife: Defina o posicionamento de luxo para o perfume {perfume}. Foque na pirâmide olfativa e no desejo.",
-            f"Aja como estrategista de TikTok: Crie 3 ganchos virais para o perfume {perfume}. Foque em 'rastro' e 'elogios'.",
-            f"Aja como Fotógrafo: Gere 3 prompts de imagem para o perfume {perfume} (Estilo Luxo, Cinematic, 8k).",
-            f"Aja como Roteirista: Crie 2 roteiros de 12 segundos para o perfume {perfume} focados em desejo e status.",
-            f"Aja como Social Media de Perfumaria: Sugira 10 hashtags e 3 legendas prontas com emojis para o perfume {perfume}."
+            f"Aja como CEO de Luxo: Defina o posicionamento premium para {item}. {diretriz}",
+            f"Aja como Estrategista Viral: Crie 3 ganchos de atenção para TikTok sobre {item}. {diretriz}",
+            f"Aja como Diretor de Fotografia: Gere 3 prompts de imagem 8k focados nos detalhes físicos de {item}. {diretriz}",
+            f"Aja como Roteirista: Crie 2 roteiros de 12s para {item} focados em desejo e status. {diretriz}",
+            f"Aja como Social Media: Sugira 10 hashtags da categoria de {item} e 3 legendas magnéticas com emojis."
         ]
         
         respostas = [] 
@@ -18,7 +21,7 @@ class AgenteAVS:
             completion = self.client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "Você é um especialista em marketing de perfumaria de luxo. Sua missão é criar estratégias de venda e viralização para perfumes, unindo sofisticação e ganchos de atenção para redes sociais."},
+                    {"role": "system", "content": "Você é um especialista em branding de luxo autônomo. Sua missão é identificar o produto e gerar conteúdo fiel às características reais dele."},
                     {"role": "user", "content": p}
                 ]
             )
