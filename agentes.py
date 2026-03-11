@@ -7,26 +7,29 @@ class AgenteAVS:
     def executar_fluxo(self, item):
         item_l = item.lower()
         
-        # --- FILTRO DE CONTEXTO REALISTA ---
+        # Manter a precisão técnica para evitar relógios, mas restaurar o tom de luxo
         if "asad" in item_l:
-            info_visual = "Frasco cilíndrico de vidro preto pesado, com 3 anéis dourados em relevo. Tampa metálica preta e dourada."
+            desc_tecnica = "Lattafa Asad. Notas: Tabaco, Café e Pimenta. Frasco: Vidro preto maciço, anéis dourados em relevo, tampa metálica pesada."
             cat = "Perfumaria Árabe de Luxo"
-            proibido = "PROIBIDO falar de relógios, notebooks, telas ou joias. Fale apenas do perfume, do frasco e do cheiro."
-        elif any(x in item_l for x in ["carro", "porsche", "ferrari"]):
-            info_visual = "Interior em couro, volante esportivo e ronco do motor."
-            cat = "Automobilismo Premium"
-            proibido = "PROIBIDO falar de perfumes ou relógios."
         else:
-            info_visual = "Acabamento artesanal e materiais nobres."
+            desc_tecnica = f"Produto {item} de alta gama."
             cat = "Artigos de Luxo"
-            proibido = ""
 
         prompts = [
-            f"Como Consultor de Luxo, analise a autoridade de '{item}'. Foque na qualidade absoluta e na marca. (Máximo 10 linhas).",
-            f"Como Estrategista, crie 3 ganchos de autoridade para Stories sobre '{item}'. {proibido}",
-            f"Como Copywriter, escreva 2 legendas magnéticas para '{item}'. Foque no prazer de possuir este item específico. Termine com 'Link na Bio'.",
-            f"Como Diretor de Arte, descreva 2 cenas de unboxing REALISTAS para '{item}'. Cena 1: O peso do objeto ao abrir a caixa. Cena 2: O detalhe visual de {info_visual}. É TERMINANTEMENTE PROIBIDO citar relógios ou eletrônicos.",
-            f"Como Social Media, dê 10 hashtags de luxo e uma frase de impacto para '{item}'."
+            # 1. ANÁLISE TÉCNICA (O CORAÇÃO DO PROJETO)
+            f"Aja como Consultor de Luxo. Escreva uma 'Análise Técnica: A Supremacia de {item}'. Use a estrutura: Materiais de Alta Qualidade, Autoridade da Marca, Performance de Elite e Conclusão. Use um tom erudito e imponente. Base: {desc_tecnica}.",
+            
+            # 2. GANCHOS DE AUTORIDADE
+            f"Aja como Especialista em Luxo. Crie 3 Ganchos de Autoridade para Stories. Use títulos fortes como 'O Padrão de Excelência' ou 'A Escolha dos Connoisseurs'. Explique por que quem entende escolhe o {item}.",
+            
+            # 3. LEGENDAS DE ALTO PADRÃO
+            f"Aja como Copywriter de Elite. Escreva 2 legendas que foquem no 'Prazer da Exclusividade' e no 'Reconhecimento Social'. Use linguagem magnética e termine com Link na Bio.",
+            
+            # 4. ROTEIRO DE UNBOXING (RESTAURANDO A EXPERIÊNCIA SENSORIAL)
+            f"Aja como Diretor de Arte. Descreva 2 Cenas de Unboxing cinematográficas para {item}. Foque na iluminação, na textura da caixa, no peso do {item} e no som (clique, spray ou manuseio). PROIBIDO CITAR RELÓGIOS OU TECNOLOGIA. Foque apenas no {cat}.",
+            
+            # 5. HASHTAGS E FRASE DE IMPACTO
+            f"Aja como Gestor de Comunidade de Luxo. Forneça 10 hashtags de nicho e uma frase de impacto que fixe sua autoridade como guardião da exclusividade."
         ]
         
         respostas = [] 
@@ -34,7 +37,7 @@ class AgenteAVS:
             completion = self.client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": f"Você é um especialista em {cat}. Você cria conteúdo para um AFILIADO DE VENDAS. Seja fiel à realidade física do produto {item}. {proibido}"},
+                    {"role": "system", "content": f"Você é o Especialista Supremo em {cat}. Sua linguagem é formal, sofisticada e autoritária. Siga rigorosamente a estrutura de tópicos solicitada, usando Markdown para destacar cabeçalhos e negritos."},
                     {"role": "user", "content": p}
                 ]
             )
