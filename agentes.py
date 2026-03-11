@@ -7,23 +7,23 @@ class AgenteAVS:
     def executar_fluxo(self, item):
         item_l = item.lower()
         
-        # --- BASE DE CONHECIMENTO TÉCNICO ---
+        # --- BANCO DE DADOS RESTRITIVO ---
         if "asad" in item_l:
-            detalhes = "Lattafa Asad: Notas densas de Tabaco, Café e Pimenta. Frasco cilíndrico preto com anéis dourados em relevo."
+            detalhes = "Lattafa Asad: Perfume Árabe. Frasco cilíndrico preto, anéis dourados em relevo, tampa pesada. Líquido denso."
             cat = "Perfume"
-        elif any(x in item_l for x in ["carro", "porsche", "ferrari", "bmw", "mercedes"]):
-            detalhes = f"Veículo {item}. Engenharia de performance, acabamento em couro e fibra de carbono."
+        elif any(x in item_l for x in ["porsche", "carro", "ferrari"]):
+            detalhes = f"Veículo {item}. Couro, fibra de carbono, ronco do motor, chave de presença."
             cat = "Automóvel"
         else:
-            detalhes = f"Produto {item}. Foco em materiais nobres e construção premium."
+            detalhes = f"Produto {item}. Materiais premium e acabamento de alta gama."
             cat = "Geral"
 
         prompts = [
-            f"Aja como Consultor de Luxo: Análise técnica sobre '{item}'. Foque na qualidade e autoridade. Base: {detalhes}.",
-            f"Aja como Estrategista: 3 ganchos de autoridade para Stories sobre '{item}'.",
-            f"Aja como Copywriter de Elite: 2 legendas magnéticas para '{item}'. Fale de status e exclusividade.",
-            f"Aja como Diretor de Arte: Descreva 2 cenas de unboxing EXCLUSIVAS de '{item}'. Foque no peso real, na textura do material de '{item}' e no som da abertura. PROIBIDO citar relógios ou celulares se o produto não for esse.",
-            f"Aja como Social Media: 10 hashtags de luxo e uma frase de impacto para '{item}'."
+            f"Aja como Consultor de Luxo: Análise técnica de '{item}'. Foque na autoridade e qualidade absoluta. Base: {detalhes}.",
+            f"Aja como Especialista: 3 ganchos de autoridade para Stories focados EXCLUSIVAMENTE em '{item}'.",
+            f"Aja como Copywriter de Elite: 2 legendas magnéticas para '{item}'. Fale de status e do prazer de possuir este item específico.",
+            f"Aja como Diretor de Arte: Descreva 2 cenas de unboxing de '{item}'. É PROIBIDO falar de relógios ou tecnologia. Foque no material real de '{item}': se for perfume, fale do vidro e da tampa; se for carro, fale do volante e couro. Descreva o som real desse produto.",
+            f"Aja como Social Media: 10 hashtags de nicho e uma frase de impacto que firme sua autoridade sobre '{item}'."
         ]
         
         respostas = [] 
@@ -31,7 +31,7 @@ class AgenteAVS:
             completion = self.client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": f"Você é um Consultor de Luxo. Categoria: {cat}. Você é estritamente fiel ao produto '{item}'. Não use exemplos de outras categorias. Se for perfume, fale do frasco e líquido. Se for carro, fale da chave e motor."},
+                    {"role": "system", "content": f"Você é um Consultor de Luxo focado em converter vendas por autoridade. Você NUNCA mistura categorias. Se o usuário pediu {cat}, você fala APENAS de {cat}. Seja técnico, imponente e detalhista."},
                     {"role": "user", "content": p}
                 ]
             )
