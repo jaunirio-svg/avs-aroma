@@ -5,30 +5,35 @@ class AgenteAVS:
         self.client = Groq(api_key=api_key)
 
     def executar_fluxo(self, item):
-        # Base de Conhecimento Blindada
-        if "asad" in item.lower():
-            info_tecnica = """
-            PRODUTO: Lattafa Asad (Perfume Árabe).
-            NOTAS REAIS: Pimenta Preta, Abacaxi, Tabaco, Café, Patchouli, Sândalo, Baunilha, Âmbar e Benjoim.
-            DESIGN: Frasco preto cilíndrico com anéis dourados em relevo e tampa preta com detalhes em ouro.
-            PERFIL: Inspirado no Sauvage Elixir, mas com toque árabe de tabaco e baunilha.
-            """
-        elif "club de nuit" in item.lower():
-            info_tecnica = """
-            PRODUTO: Armaf Club de Nuit Intense Man.
-            NOTAS REAIS: Limão, Groselha Preta, Maçã, Bergamota, Abacaxi, Rosa, Jasmim, Bétula, Almíscar, Âmbar Cinzento.
-            DESIGN: Frasco preto fosco, corrente com medalhão e cristais.
-            PERFIL: Famoso pelo rastro quilométrico e fixação extrema.
-            """
+        # Identificação de Categoria para evitar misturar perfume com outros itens
+        item_lower = item.lower()
+        perfumes_conhecidos = {
+            "asad": "Perfume Árabe Lattafa Asad. Notas: Pimenta Preta, Tabaco, Café, Baunilha. Frasco preto com anéis dourados.",
+            "club de nuit": "Perfume Árabe Armaf Club de Nuit Intense. Notas: Limão, Abacaxi, Bétula, Almíscar. Frasco preto com corrente."
+        }
+
+        # Define o contexto baseado no que o usuário digitou
+        contexto = "Produto de Luxo Geral"
+        eh_perfume = False
+
+        for nome, info in perfumes_conhecidos.items():
+            if nome in item_lower:
+                contexto = info
+                eh_perfume = True
+                break
+        
+        # Ajuste dinâmico de tom de voz
+        if eh_perfume:
+            instrucao_nicho = "Foque em Pirâmide Olfativa, rastro, fixação e design do frasco."
         else:
-            info_tecnica = f"Produto genérico: {item}. Foque em luxo e sofisticação."
+            instrucao_nicho = "Foque em engenharia, materiais nobres, durabilidade, legado e status técnico do objeto."
 
         prompts = [
-            f"Aja como CEO: Com base em: {info_tecnica}, descreva o posicionamento de luxo de {item}. Use as notas REAIS de Tabaco e Café se for o Asad. Descreva o frasco preto com anéis dourados.",
-            f"Aja como Estrategista: 3 ganchos TikTok para {item}. Use termos como 'Rastro de Milionário', 'Cheiro de Poder' e 'Elogios garantidos'.",
-            f"Aja como Fotógrafo: 3 prompts 8k para o frasco real de {item}. Detalhe os anéis dourados (se for Asad) ou a corrente (se for Club de Nuit).",
-            f"Aja como Roteirista: 2 roteiros de 12s. Foque no close-up do borrifador e na reação de 'pescoço virando' quando o rastro passa.",
-            f"Aja como Social Media: 10 hashtags (Ex: #PerfumesArabes #LattafaAsad #ModaMasculina) e 3 legendas magnéticas. PROIBIDO culinária."
+            f"Aja como CEO: Defina o posicionamento de luxo de '{item}' baseado em: {contexto}. {instrucao_nicho}",
+            f"Aja como Estrategista Viral: 3 ganchos TikTok para '{item}'. Use 'Status', 'Exclusividade' e 'Desejo'.",
+            f"Aja como Diretor de Arte: 3 prompts 8k para '{item}'. Foque nas texturas reais (metal, couro, vidro ou fibra de carbono).",
+            f"Aja como Roteirista: 2 roteiros de 12s para '{item}'. Mostre o produto em um ambiente que exale sucesso.",
+            f"Aja como Social Media: 10 hashtags específicas para a categoria de '{item}' e 3 legendas magnéticas."
         ]
         
         respostas = [] 
@@ -36,7 +41,7 @@ class AgenteAVS:
             completion = self.client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": f"Você é a Inteligência Autônoma do Almir. Você tem acesso à ficha técnica: {info_tecnica}. Você NUNCA inventa notas cítricas para perfumes que são de tabaco. Você é direto, luxuoso e técnico."},
+                    {"role": "system", "content": f"Você é um consultor de branding de luxo. Identifique o produto e use APENAS termos da categoria dele. Se não for perfume, não fale de cheiro. Se for objeto, fale de design e utilidade."},
                     {"role": "user", "content": p}
                 ]
             )
