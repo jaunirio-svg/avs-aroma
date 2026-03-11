@@ -5,22 +5,30 @@ class AgenteAVS:
         self.client = Groq(api_key=api_key)
 
     def executar_fluxo(self, item):
-        # BANCO DE DADOS INTERNO PARA NÃO DAR ERRO DE CONTEXTO
-        contexto_especifico = ""
-        
+        # Base de Conhecimento Blindada
         if "asad" in item.lower():
-            contexto_especifico = "O Asad da Lattafa é um perfume árabe masculino, famoso por ser inspirado no Sauvage Elixir. Notas Reais: Pimenta Preta, Abacaxi, Tabaco, Café, Patchouli, Sândalo e Baunilha. O frasco é preto com detalhes dourados em relevo."
+            info_tecnica = """
+            PRODUTO: Lattafa Asad (Perfume Árabe).
+            NOTAS REAIS: Pimenta Preta, Abacaxi, Tabaco, Café, Patchouli, Sândalo, Baunilha, Âmbar e Benjoim.
+            DESIGN: Frasco preto cilíndrico com anéis dourados em relevo e tampa preta com detalhes em ouro.
+            PERFIL: Inspirado no Sauvage Elixir, mas com toque árabe de tabaco e baunilha.
+            """
         elif "club de nuit" in item.lower():
-            contexto_especifico = "O Club de Nuit Intense Man da Armaf é um perfume árabe focado em rastro e projeção, inspirado no Creed Aventus. Notas: Limão, Groselha, Maçã, Rosa, Jasmim, Bétula, Almíscar e Âmbar Cinzento. O frasco é preto fosco com uma corrente e medalhão pendurado."
-        
-        diretriz = f"Considere este contexto técnico: {contexto_especifico}. Identifique o produto '{item}' e gere conteúdo de luxo. Proibido falar de comida ou acessórios externos como relógios. Foco no frasco e no rastro."
-        
+            info_tecnica = """
+            PRODUTO: Armaf Club de Nuit Intense Man.
+            NOTAS REAIS: Limão, Groselha Preta, Maçã, Bergamota, Abacaxi, Rosa, Jasmim, Bétula, Almíscar, Âmbar Cinzento.
+            DESIGN: Frasco preto fosco, corrente com medalhão e cristais.
+            PERFIL: Famoso pelo rastro quilométrico e fixação extrema.
+            """
+        else:
+            info_tecnica = f"Produto genérico: {item}. Foque em luxo e sofisticação."
+
         prompts = [
-            f"Aja como CEO: Defina o posicionamento premium de {item}. Use a pirâmide olfativa correta mencionada no contexto. Fale do design do frasco.",
-            f"Aja como Estrategista Viral: Crie 3 ganchos magnéticos para TikTok sobre {item}. Foque no 'Rastro de Milionário' e nos elogios.",
-            f"Aja como Fotógrafo: Gere 3 prompts de imagem 8k focados no frasco de {item}. Descreva o brilho do vidro e os detalhes metálicos.",
-            f"Aja como Roteirista: Crie 2 roteiros de 12s. Close no borrifador e na reação das pessoas ao sentirem o rastro.",
-            f"Aja como Social Media: Sugira 10 hashtags de PERFUMARIA e 3 legendas magnéticas. Proibido hashtags de comida."
+            f"Aja como CEO: Com base em: {info_tecnica}, descreva o posicionamento de luxo de {item}. Use as notas REAIS de Tabaco e Café se for o Asad. Descreva o frasco preto com anéis dourados.",
+            f"Aja como Estrategista: 3 ganchos TikTok para {item}. Use termos como 'Rastro de Milionário', 'Cheiro de Poder' e 'Elogios garantidos'.",
+            f"Aja como Fotógrafo: 3 prompts 8k para o frasco real de {item}. Detalhe os anéis dourados (se for Asad) ou a corrente (se for Club de Nuit).",
+            f"Aja como Roteirista: 2 roteiros de 12s. Foque no close-up do borrifador e na reação de 'pescoço virando' quando o rastro passa.",
+            f"Aja como Social Media: 10 hashtags (Ex: #PerfumesArabes #LattafaAsad #ModaMasculina) e 3 legendas magnéticas. PROIBIDO culinária."
         ]
         
         respostas = [] 
@@ -28,7 +36,7 @@ class AgenteAVS:
             completion = self.client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "Você é um especialista em Perfumaria Árabe e Branding de Luxo. Você nunca alucina. Você entrega dados técnicos precisos e roteiros prontos para postar."},
+                    {"role": "system", "content": f"Você é a Inteligência Autônoma do Almir. Você tem acesso à ficha técnica: {info_tecnica}. Você NUNCA inventa notas cítricas para perfumes que são de tabaco. Você é direto, luxuoso e técnico."},
                     {"role": "user", "content": p}
                 ]
             )
