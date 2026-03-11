@@ -7,37 +7,23 @@ class AgenteAVS:
     def executar_fluxo(self, item):
         item_l = item.lower()
         
-        # --- BANCO DE DADOS DE CONHECIMENTO ---
-        contexto = "Produto de Luxo Premium"
-        categoria = "Geral"
-
-        # Lógica de Perfumes
+        # --- BASE DE CONHECIMENTO TÉCNICO ---
         if "asad" in item_l:
-            contexto = "Lattafa Asad: Notas de Pimenta Preta, Tabaco, Café e Baunilha. Frasco preto com anéis dourados."
-            categoria = "Perfume"
-        elif "club de nuit" in item_l:
-            contexto = "Armaf Club de Nuit: Notas de Limão, Bétula e Almíscar. Rastro intenso e medalhão no frasco."
-            categoria = "Perfume"
-        
-        # Lógica de Carros
-        elif any(x in item_l for x in ["carro", "porsche", "ferrari", "lamborghini", "bmw", "mercedes", "audi", "mclaren"]):
-            contexto = f"Veículo de Alta Performance {item}. Foco em aerodinâmica, cavalaria, ronco do motor e fibra de carbono."
-            categoria = "Carro"
-
-        # --- DEFINIÇÃO DE INSTRUÇÕES POR CATEGORIA ---
-        if categoria == "Perfume":
-            instrucao = "Fale de notas olfativas, rastro magnético e elegância do frasco."
-        elif categoria == "Carro":
-            instrucao = "Fale de torque, potência, velocidade, status nas ruas e o prazer de dirigir uma máquina."
+            detalhes = "Lattafa Asad: Obra-prima árabe. Notas densas de Tabaco, Café e Pimenta. Performance de elite e presença de impacto."
+            cat = "Perfume"
+        elif any(x in item_l for x in ["carro", "porsche", "ferrari", "bmw"]):
+            detalhes = f"Engenharia de ponta {item}. Performance, aerodinâmica e legado de vitórias."
+            cat = "Carro"
         else:
-            instrucao = "Fale de materiais nobres, engenharia de precisão, exclusividade e legado da marca."
+            detalhes = f"Produto Premium {item}. Excelência em materiais e acabamento superior."
+            cat = "Geral"
 
         prompts = [
-            f"Aja como CEO: Defina o DNA de luxo de '{item}'. Contexto: {contexto}. {instrucao}",
-            f"Aja como Estrategista Viral: 3 ganchos TikTok para '{item}'. Foque no desejo e na conquista do topo.",
-            f"Aja como Fotógrafo: 3 prompts 8k específicos para '{item}'. Se for carro, detalhe a pintura e as rodas. Se for perfume, o vidro.",
-            f"Aja como Roteirista: 2 roteiros de 12s para '{item}'. Foque na experiência sensorial (o som do motor ou o rastro do cheiro).",
-            f"Aja como Social Media: 10 hashtags e 3 legendas magnéticas para '{item}'."
+            f"Aja como Consultor de Luxo: Crie uma análise técnica sobre a superioridade de '{item}'. Foque na qualidade dos materiais e na autoridade da marca. {detalhes}. (Proibido falar de preços ou descontos).",
+            f"Aja como Especialista: Crie 3 ganchos de autoridade para Stories. Mostre por que quem entende de verdade escolhe o '{item}'.",
+            f"Aja como Copywriter de Elite: Escreva 2 legendas de alto padrão. O foco deve ser o 'prazer da exclusividade' e o 'reconhecimento social' que o produto traz.",
+            f"Aja como Diretor de Arte: Descreva 2 cenas de unboxing que pareçam um ritual de luxo. Foque no peso do produto e nos detalhes de acabamento.",
+            f"Aja como Gestor de Comunidade: Sugira 10 hashtags de nicho de luxo e uma frase de impacto para fixar sua autoridade como consultor."
         ]
         
         respostas = [] 
@@ -45,7 +31,7 @@ class AgenteAVS:
             completion = self.client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": f"Você é um consultor de luxo. Categoria atual: {categoria}. PROIBIDO misturar categorias. Se for carro, não fale de cheiro. Se for perfume, não fale de motor."},
+                    {"role": "system", "content": "Você é um Consultor de Autoridade em Luxo. Sua linguagem é refinada, técnica e imponente. Você não vende preço, você vende excelência, performance e status. O foco é a qualidade absoluta."},
                     {"role": "user", "content": p}
                 ]
             )
