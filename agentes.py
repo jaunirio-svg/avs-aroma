@@ -7,26 +7,25 @@ class AgenteAVS:
     def executar_fluxo(self, item):
         item_l = item.lower()
         
-        # --- FILTRO RÍGIDO DE CONTEXTO ---
-        if "asad" in item_l or "perfume" in item_l or "aroma" in item_l:
-            cat = "Perfumaria de Luxo"
-            persona = "Especialista em Fragrâncias Árabes"
-            detalhes_base = "Frasco de vidro pesado, tampa metálica, spray de alta névoa, notas de tabaco e especiarias. Proibido falar de relógios ou eletrônicos."
-        elif any(x in item_l for x in ["carro", "porsche", "ferrari", "bmw"]):
-            cat = "Automobilismo Premium"
-            persona = "Consultor Automotivo de Luxo"
-            detalhes_base = "Chave de presença, couro legítimo, costura à mão, ronco do motor boxer. Proibido falar de perfumes."
+        # --- BLOQUEIO DE CONTEXTO ---
+        if "asad" in item_l:
+            info = "Produto: Perfume Lattafa Asad. Visual: Frasco cilíndrico preto, anéis dourados em relevo, tampa pesada. Notas: Tabaco e Café."
+            cat = "Perfumaria Árabe"
+            proibido = "Proibido falar de relógios, ponteiros, joias, diamantes ou notebooks."
+        elif any(x in item_l for x in ["carro", "porsche", "ferrari"]):
+            info = f"Produto: Veículo {item}. Visual: Couro, ronco do motor e chave de presença."
+            cat = "Automóveis de Luxo"
+            proibido = "Proibido falar de perfumes ou joias."
         else:
-            cat = "Artigos de Luxo"
-            persona = "Curador de Estilo"
-            detalhes_base = "Acabamento artesanal e materiais nobres."
+            info = f"Produto: {item}. Foco em materiais nobres."
+            cat = "Luxo"
+            proibido = ""
 
-        # Prompts redesenhados para serem 'impossíveis' de errar
         prompts = [
-            f"Como {persona}, faça uma análise técnica da autoridade de '{item}'. Foque na marca e qualidade. (Máximo 15 linhas).",
-            f"Como Estrategista, crie 3 ganchos de autoridade para Stories sobre '{item}'. Foque no status de usar este produto específico.",
-            f"Como Copywriter, escreva 2 legendas magnéticas para '{item}'. Foque em exclusividade e no prazer da posse.",
-            f"Como Diretor, descreva 2 cenas de unboxing de '{item}'. DESCRIÇÃO OBRIGATÓRIA: Se for perfume, descreva o vidro preto e os anéis dourados. Se for carro, descreva o interior e a chave. PROIBIDO CITAR OUTROS PRODUTOS.",
+            f"Como Consultor de Luxo, faça uma análise técnica da autoridade de '{item}'. (Máximo 10 linhas). Base: {info}",
+            f"Como Estrategista, crie 3 ganchos para Stories sobre '{item}'. Foque no status de usar este produto específico. {proibido}",
+            f"Como Copywriter, escreva 2 legendas magnéticas para '{item}'. Foque em exclusividade. {proibido}",
+            f"Como Diretor de Vídeo, descreva 2 cenas de unboxing de '{item}'. DESCRIÇÃO OBRIGATÓRIA: Se for o perfume Asad, descreva o frasco de vidro preto, os anéis dourados e a caixa luxuosa. Se for carro, descreva o volante. {proibido}",
             f"Como Social Media, dê 10 hashtags de luxo e uma frase de impacto para '{item}'."
         ]
         
@@ -35,7 +34,7 @@ class AgenteAVS:
             completion = self.client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": f"Você é um especialista em {cat}. Sua missão é criar conteúdo para um AFILIADO DE VENDAS. Seja fiel ao produto '{item}'. {detalhes_base}"},
+                    {"role": "system", "content": f"Você é um especialista em {cat}. Você NUNCA usa exemplos de outras categorias. Seja fiel às características físicas de {item}. {proibido}"},
                     {"role": "user", "content": p}
                 ]
             )
