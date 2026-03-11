@@ -19,11 +19,8 @@ class AgenteAVS:
             cat = "Geral"
 
         prompts = [
-            f"Aja como Consultor de Luxo: Crie uma análise técnica sobre a superioridade de '{item}'. Foque na qualidade dos materiais e na autoridade da marca. {detalhes}. (Proibido falar de preços ou descontos).",
-            f"Aja como Especialista: Crie 3 ganchos de autoridade para Stories. Mostre por que quem entende de verdade escolhe o '{item}'.",
-            f"Aja como Copywriter de Elite: Escreva 2 legendas de alto padrão. O foco deve ser o 'prazer da exclusividade' e o 'reconhecimento social' que o produto traz.",
-            f"Aja como Diretor de Arte: Descreva 2 cenas de unboxing que pareçam um ritual de luxo. Foque no peso do produto e nos detalhes de acabamento.",
-            f"Aja como Gestor de Comunidade: Sugira 10 hashtags de nicho de luxo e uma frase de impacto para fixar sua autoridade como consultor."
+            f"Aja como Diretor de Arte: Descreva 2 cenas de unboxing/detalhe FOCO TOTAL EM '{item}'. Se for carro, foque na chave, no volante e no painel. Se for perfume, no peso do vidro e na tampa. Proibido citar outros objetos.",
+munidade: Sugira 10 hashtags de nicho de luxo e uma frase de impacto para fixar sua autoridade como consultor."
         ]
         
         respostas = [] 
