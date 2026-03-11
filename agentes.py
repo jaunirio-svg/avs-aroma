@@ -7,29 +7,26 @@ class AgenteAVS:
     def executar_fluxo(self, item):
         item_l = item.lower()
         
-        # --- DEFINIÇÃO DE PERSONA E REGRAS RÍGIDAS ---
+        # --- BANCO DE DADOS DE CONTEXTO RÍGIDO ---
         if "asad" in item_l:
-            p_nome = "Lattafa Asad (Perfume)"
-            p_visual = "Frasco de vidro preto maciço, anéis dourados em relevo, tampa pesada metálica."
-            p_cat = "Perfumaria de Nicho"
-            regras = "PROIBIDO falar de relógios, notebooks, ponteiros, telas, diamantes ou joias. Foque apenas no perfume, no líquido e no frasco."
+            info = "Lattafa Asad: Perfume Árabe. Visual: Frasco cilíndrico de vidro preto pesado, com 3 anéis dourados em relevo no corpo. Tampa metálica preta e dourada. Caixa luxuosa."
+            cat = "Perfumaria de Elite"
+            regras = "PROIBIDO falar de relógios, joias, telas, engrenagens ou notebooks. Fale apenas do frasco, do líquido e do ritual de borrifar."
         elif any(x in item_l for x in ["carro", "porsche", "ferrari"]):
-            p_nome = f"Carro {item}"
-            p_visual = "Couro legítimo, volante esportivo, ronco do motor e chave de presença."
-            p_cat = "Automobilismo Premium"
-            regras = "PROIBIDO falar de perfumes ou relógios."
+            info = f"Veículo {item}. Visual: Interior em couro, volante com logo em destaque, ronco do motor e chave de presença."
+            cat = "Automobilismo Premium"
+            regras = "PROIBIDO falar de perfumes ou joias."
         else:
-            p_nome = item
-            p_visual = "Materiais nobres e acabamento artesanal."
-            p_cat = "Artigos Premium"
+            info = f"Produto {item}. Foco em materiais nobres."
+            cat = "Artigos de Luxo"
             regras = ""
 
         prompts = [
-            f"Como Consultor de {p_cat}, analise a autoridade de '{p_nome}'. Baseie-se no visual: {p_visual}. (Max 10 linhas).",
-            f"Como Estrategista, crie 3 ganchos para Stories sobre '{p_nome}'. Mostre por que ele é um símbolo de poder. {regras}",
-            f"Como Copywriter, escreva 2 legendas magnéticas para '{p_nome}'. Termine com 'Link na Bio'. {regras}",
-            f"Como Diretor, descreva 2 cenas de unboxing EXCLUSIVAS de '{p_nome}'. Cena 1: O peso do frasco/item. Cena 2: O detalhe do material ({p_visual}). É TERMINANTEMENTE PROIBIDO citar outros produtos como relógios ou eletrônicos.",
-            f"Como Social Media, dê 10 hashtags e uma frase de impacto para '{p_nome}'."
+            f"Como Consultor de Luxo, analise a autoridade de '{item}'. Foque no peso da marca e qualidade dos materiais. (Max 10 linhas).",
+            f"Como Estrategista, crie 3 ganchos para Stories sobre '{item}'. {regras}",
+            f"Como Copywriter, escreva 2 legendas magnéticas para '{item}'. Inclua 'Link na Bio'. {regras}",
+            f"Como Diretor de Arte, descreva 2 cenas de unboxing REALISTAS para '{item}'. CENA 1: O peso do objeto e a abertura da caixa. CENA 2: O detalhe visual específico ({info}). É TERMINANTEMENTE PROIBIDO falar de relógios ou joias se o produto for perfume.",
+            f"Como Social Media, dê 10 hashtags de luxo e uma frase de impacto para '{item}'."
         ]
         
         respostas = [] 
@@ -37,7 +34,7 @@ class AgenteAVS:
             completion = self.client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": f"Você é um especialista focado em {p_cat}. Você é um AFILIADO DE VENDAS. Seja 100% fiel ao produto {p_nome}. {regras}"},
+                    {"role": "system", "content": f"Você é um especialista em {cat}. Você escreve roteiros para um AFILIADO DE VENDAS. Seja 100% fiel ao produto {item}. {regras}"},
                     {"role": "user", "content": p}
                 ]
             )
